@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Raw Material Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      padding: 10px;
+      color: #333;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 18px 14px;
+      border-radius: 12px;
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      color: #2c3e50;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 9px 10px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    input[type="number"]:invalid {
+      border-color: red;
+    }
+
+    button {
+      padding: 10px 16px;
+      margin-top: 18px;
+      margin-right: 6px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      overflow: hidden;
+      min-width: 320px;
+      border: 1.5px solid #ddd;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid #eee;
+      font-size: 1rem;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    th:last-child, td:last-child {
+      border-right: none;
+    }
+
+    th {
+      background-color: #f9f9f9;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .footer {
+      margin-top: 32px;
+      text-align: center;
+      color: #555;
+      font-size: 14px;
+      border-top: 1px solid #ddd;
+      padding-top: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .form-container {
+        max-width: 100%;
+        padding: 12px 4vw;
+      }
+      h2 {
+        font-size: 1.2rem;
+      }
+      label, input, button {
+        font-size: 0.98rem;
+      }
+      .footer {
+        font-size: 12px;
+        padding-top: 8px;
+      }
+      table, th, td {
+        font-size: 0.99rem;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .form-container {
+        padding: 10px 2vw;
+      }
+      table, th, td {
+        font-size: 0.95rem;
+        padding: 10px 6px;
+      }
+      button {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Raw Material Calculator</h2>
+
+    <label for="item">Item Name:</label>
+    <input type="text" id="item" value="4.5 inch Sesame Bun" readonly>
+
+    <label for="quantity">Quantity (in PCS):</label>
+    <input type="number" id="quantity" min="1" step="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="Enter Quantity">
+
+    <button onclick="calculate()">Calculate</button>
+    <button onclick="exportPDF()">Export to PDF</button>
+    <button onclick="exportExcel()">Export to Excel</button>
+  </div>
+
+  <div>
+    <h3 style="margin-top:18px;margin-bottom:8px;font-size:1.18rem;">Raw Materials Required</h3>
+    <div class="table-wrapper">
+      <table id="resultTable">
+        <thead>
+          <tr>
+            <th style="border-top:1.5px solid #bbb;border-bottom:1.5px solid #bbb;">Material</th>
+            <th style="border-top:1.5px solid #bbb;border-bottom:1.5px solid #bbb;">Quantity</th>
+            <th style="border-top:1.5px solid #bbb;border-bottom:1.5px solid #bbb;">Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamic rows go here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    Design and developed by <strong>Samir Singh Samanta</strong> || Contact: <a href="tel:+917606936790">7606936790</a>
+  </div>
+
+  <script>
+    const baseQuantities = {
+      "MAIDA": [0.0377358490566038, "mass"],
+      "SUGAR": [0.00377358490566038, "mass"],
+      "SALT": [0.000679245283018868, "mass"],
+      "YEAST": [0.00113207547169811, "mass"],
+      "OIL": [0.00113207547169811, "volume"],
+      "WATER": [0.0226415094339623, "volume"],
+      "BREAD IMPROVER": [0.0000377358490566038, "mass"],
+      "CALCIUM": [0.00030188679245283, "mass"],
+      "SESAME SEEDS": [0.000943396226415094, "mass"],
+      "ACETIC ACID": [0.0000377358490566038, "mass"],
+      "GLUTEN": [0.000188679245283019, "mass"]
+    };
+
+    function calculate() {
+      const quantity = parseInt(document.getElementById("quantity").value);
+      if (!quantity || quantity < 1) {
+        alert("Please enter a valid whole number of pieces.");
+        return;
+      }
+
+      const tbody = document.querySelector("#resultTable tbody");
+      tbody.innerHTML = "";
+
+      for (const [material, [perPieceQty, type]] of Object.entries(baseQuantities)) {
+        const totalQty = perPieceQty * quantity;
+        let displayQty, unit;
+
+        if (type === "mass") {
+          if (totalQty >= 1) {
+            displayQty = totalQty.toFixed(3);
+            unit = "kg";
+          } else {
+            displayQty = (totalQty * 1000).toFixed(2);
+            unit = "g";
+          }
+        } else {
+          if (totalQty >= 1) {
+            displayQty = totalQty.toFixed(3);
+            unit = "ltr";
+          } else {
+            displayQty = (totalQty * 1000).toFixed(2);
+            unit = "ml";
+          }
+        }
+
+        const row = tbody.insertRow();
+        row.insertCell(0).innerText = material;
+        row.insertCell(1).innerText = displayQty;
+        row.insertCell(2).innerText = unit;
+      }
+    }
+
+    function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({unit: 'mm', format: 'a4'});
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 12;
+      let y = 20;
+
+      // Date and Time
+      const now = new Date();
+      const dateTime = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+
+      // Title
+      doc.setFontSize(16);
+      doc.text("Raw Material Requirement", pageWidth/2, y, {align: "center"});
+      y += 9;
+
+      doc.setFontSize(12);
+      doc.text("Item: 4.5 inch Sesame Bun", margin, y);
+      doc.text("Date & Time: " + dateTime, pageWidth - margin, y, {align: "right"});
+      y += 8;
+
+      // Table Header Border
+      doc.setLineWidth(0.6);
+      doc.rect(margin, y, pageWidth - 2*margin, 10);
+
+      // Table Header
+      doc.setFontSize(11);
+      doc.text("Material", margin+2, y+7);
+      doc.text("Quantity", pageWidth/2-10, y+7);
+      doc.text("Unit", pageWidth-margin-26, y+7);
+
+      y += 10;
+
+      // Table rows
+      const rows = document.querySelector("#resultTable tbody").rows;
+      doc.setFontSize(10);
+      for (let row of rows) {
+        // Row border
+        doc.setDrawColor(170);
+        doc.rect(margin, y, pageWidth - 2*margin, 9);
+
+        doc.text(row.cells[0].innerText, margin+2, y+6);
+        doc.text(row.cells[1].innerText, pageWidth/2-10, y+6);
+        doc.text(row.cells[2].innerText, pageWidth-margin-26, y+6);
+        y += 9;
+        if (y > 270) {
+          doc.addPage();
+          y = 15;
+        }
+      }
+
+      // Footer
+      doc.setFontSize(9);
+      doc.setTextColor(110);
+      doc.text("Design and developed by Samir Singh Samanta || Contact: 7606936790", pageWidth/2, 292, {align: "center"});
+      doc.save("Raw_Material_Requirement.pdf");
+    }
+
+    function exportExcel() {
+      const wb = XLSX.utils.book_new();
+      const ws_data = [["Material", "Quantity", "Unit"]];
+      const rows = document.querySelector("#resultTable tbody").rows;
+
+      for (let row of rows) {
+        const rowData = [
+          row.cells[0].innerText,
+          row.cells[1].innerText,
+          row.cells[2].innerText
+        ];
+        ws_data.push(rowData);
+      }
+
+      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      XLSX.utils.book_append_sheet(wb, ws, "RawMaterials");
+      XLSX.writeFile(wb, "Raw_Material_Requirement.xlsx");
+    }
+  </script>
+
+</body>
+</html>
