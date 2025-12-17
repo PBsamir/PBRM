@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PB HRMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    :root {
+      --primary-color: #3a5cad;
+      --primary-dark: #2c4685;
+      --secondary-color: #6c757d;
+      --accent-green: #28a745;
+      --accent-red: #dc3545;
+      --bg-light: #f8f9fa;
+      --bg-gradient: linear-gradient(180deg, #eef4ff 0%, #ffffff 100%);
+      --text-dark: #343a40;
+      --text-light: #6c757d;
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --border-radius: 1rem;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      font-family: 'Poppins', 'Segoe UI', 'Roboto', Arial, sans-serif;
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container-fluid {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0;
+      max-width: 450px;
+      margin: 0 auto;
+      background-color: #fff;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .page-section {
+      transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .page-section.hidden {
+      opacity: 0;
+      transform: scale(0.98);
+      display: none !important;
+    }
+    
+    #login-section {
+        padding: 1rem;
+        justify-content: center;
+    }
+
+    .logo-box {
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    .logo-img {
+      max-width: 220px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
+    }
+
+    .card {
+      border: none;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      background: #fff;
+      overflow: hidden;
+    }
+    
+    #login-section .card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-header, h3, h4, h5 {
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+    
+    h3 { font-size: 1.6rem; }
+    h4 { font-size: 1.4rem; }
+    h5 { font-size: 1.15rem; }
+
+    /* Forms */
+    .form-control {
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid #dee2e6;
+    }
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(58, 92, 173, 0.15);
+    }
+    .form-label {
+      font-weight: 500;
+      color: var(--text-light);
+    }
+    .password-wrapper {
+        position: relative;
+    }
+    #togglePassword, #toggleNewPassword {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: var(--text-light);
+    }
+
+    /* Buttons */
+    .btn {
+      border-radius: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+    }
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(58, 92, 173, 0.2);
+    }
+    .btn-success {
+      background-color: var(--accent-green);
+      border-color: var(--accent-green);
+    }
+    
+    /* Login Page Summary Cards */
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .summary-card {
+      background: #fff;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+    }
+    .summary-count {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      line-height: 1.1;
+    }
+    .summary-label {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* Slot Grid */
+    .slots-headline {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin: 1rem 0 0.75rem 0;
+      text-align: center;
+    }
+    .slots-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .slot-card {
+      background: #fff;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .slot-label {
+      font-size: 0.8rem;
+      color: var(--primary-dark);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .slot-count {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent-green);
+      line-height: 1.1;
+    }
+
+    /* Dashboard */
+    #dashboard-section {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background-color: #ffffff;
+        color: var(--text-dark);
+        flex-shrink: 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .header-logo {
+        height: 50px;
+    }
+    .logout-btn {
+        background: #f1f1f1;
+        color: var(--text-dark);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        padding: 0;
+    }
+    
+    .dashboard-content {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .tab-content:not(#history-tab) {
+        padding: 1.25rem;
+    }
+    #history-tab.tab-content.active {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    #history-tab > .d-flex, #history-tab > p {
+        padding: 0 1.25rem;
+        flex-shrink: 0;
+    }
+    #history-tab > .d-flex {
+        padding-top: 1.25rem;
+    }
+    
+    .dashboard-footer {
+        flex-shrink: 0;
+    }
+    .marquee-support {
+      padding: 0.5em 0;
+      color: var(--text-light);
+      font-size: 0.8rem;
+      text-align: center;
+      background-color: #f8f9fa;
+    }
+    
+    .nav-tabs-bottom {
+        display: flex;
+        justify-content: space-around;
+        padding: 0.5rem 0;
+        border-top: 1px solid #dee2e6;
+        background-color: #fff;
+    }
+    .nav-tab {
+        flex: 1;
+        text-align: center;
+        padding: 0.5rem 0;
+        cursor: pointer;
+        color: var(--text-light);
+        background: none;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    .nav-tab i {
+        font-size: 1.5rem;
+    }
+    .nav-tab.active {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+
+    /* Attendance Records */
+    #attendanceRecords {
+        overflow-y: auto;
+    }
+    #historyList {
+        flex-grow: 1;
+        padding: 0 1.25rem;
+        overflow-y: auto;
+    }
+    .attendance-record-row {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .attendance-record-row:last-child { border-bottom: none; }
+    .attendance-img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid var(--primary-color);
+    }
+    .record-info-name { font-weight: 500; }
+    .record-info-time { font-size: 0.9rem; color: var(--text-light); }
+    
+    /* Calendar */
+    .calendar-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-top: 1rem;
+    }
+    .calendar-table th {
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 0.8rem;
+    }
+    .calendar-table th, .calendar-table td {
+      text-align: center;
+      padding: 0.5rem 0;
+      vertical-align: middle;
+      font-size: 0.9rem;
+      position: relative;
+    }
+    .calendar-day {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        border-radius: 50%;
+    }
+    .day-present { background-color: rgba(40, 167, 69, 0.15); color: #1e7b34; font-weight: 600; }
+    .day-absent { background-color: rgba(220, 53, 69, 0.1); color: var(--accent-red); font-weight: 600;}
+
+    /* Camera Modal */
+    .webcam-box {
+      width: 100%;
+      min-height: 240px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f1f1f1;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    #webcam {
+      width: 240px;
+      height: 320px;
+      object-fit: cover;
+      background: #e5f0fa;
+      transform: scaleX(-1); /* Mirror the webcam preview */
+    }
+    .selfie-preview {
+      width: 100%;
+      height: auto;
+      border-radius: var(--border-radius);
+    }
+
+    #summary-section {
+      flex: 1; 
+      overflow-y: auto; 
+      padding-top: 1rem;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    #summary-section::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  
+  <div class="page-section" id="login-section">
+    <div class="logo-box">
+      <img src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    </div>
+    
+    <div class="card p-4 shadow-sm">
+      <h3 class="mb-4 text-center">Employee Login</h3>
+      <form id="loginForm">
+        <div class="mb-3">
+          <label for="username" class="form-label">User Name</label>
+          <input type="text" class="form-control" id="username" required autocomplete="username" placeholder="Enter your username">
+        </div>
+        <div class="mb-4">
+          <label for="userPassword" class="form-label">Password</label>
+          <div class="password-wrapper">
+            <input type="password" class="form-control" id="userPassword" required autocomplete="current-password" placeholder="Enter your password" style="padding-right: 3rem;">
+            <i class="bi bi-eye-slash" id="togglePassword"></i>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-box-arrow-in-right me-2"></i>Login</button>
+      </form>
+      <div id="loginError" class="text-danger mt-3 text-center d-none"></div>
+    </div>
+
+    <div id="summary-section">
+      <div class="summary-row">
+        <div class="summary-card">
+          <div class="summary-count" id="summaryTotalEmp">0</div>
+          <div class="summary-label">Total Staff</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-count" id="summaryPresent">0</div>
+          <div class="summary-label">Present</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-count" id="summaryAbsent">0</div>
+          <div class="summary-label">Absent</div>
+        </div>
+      </div>
+      
+      <div class="slots-headline">Today's Attendance by Slot</div>
+      <div class="slots-grid" id="attendanceSlotsRow">
+        <div class="slot-card">
+          <div class="slot-label">7am - 9am</div>
+          <div class="slot-count" id="slot1Count">0</div>
+        </div>
+        <div class="slot-card">
+          <div class="slot-label">9am - 1pm</div>
+          <div class="slot-count" id="slot2Count">0</div>
+        </div>
+        <div class="slot-card">
+          <div class="slot-label">1pm - 5pm</div>
+          <div class="slot-count" id="slot3Count">0</div>
+        </div>
+        <div class="slot-card">
+          <div class="slot-label">5pm - 10pm</div>
+          <div class="slot-count" id="slot4Count">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-section hidden" id="dashboard-section">
+    <header class="dashboard-header">
+        <img src="logo.png" alt="Logo" class="header-logo" onerror="this.style.display='none'">
+        <button class="btn logout-btn" id="logoutBtn" title="Logout"><i class="bi bi-box-arrow-right"></i></button>
+    </header>
+
+    <main class="dashboard-content">
+        <div id="attendance-tab" class="tab-content active">
+            <h4 class="mb-1">Hello, <span id="employeeName"></span>!</h4>
+            <div id="employeeLocation" class="text-muted mb-3"></div>
+            
+            <div id="attendanceStatus" class="alert d-none"></div>
+            
+            <div class="d-grid gap-2 mb-4">
+              <button class="btn btn-success" id="markAttendanceBtn"><i class="bi bi-camera-fill me-2"></i>Mark Attendance</button>
+            </div>
+            
+            <div class="d-none" id="selfiePreviewSection">
+                <img id="selfiePreview" class="selfie-preview mb-3 shadow-sm" alt="Selfie Preview">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" id="submitAttendanceBtn"><i class="bi bi-check-circle-fill me-2"></i>Submit Attendance</button>
+                    <button class="btn btn-outline-secondary" id="retakeSelfieBtn"><i class="bi bi-arrow-counterclockwise me-2"></i>Retake</button>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <h5 class="mb-3"><i class="bi bi-clock-history me-2"></i>Recent Attendance</h5>
+            <div id="attendanceRecords"></div>
+        </div>
+
+        <div id="calendar-tab" class="tab-content">
+            <h5 class="mb-2"><i class="bi bi-calendar-check me-2"></i>Attendance Calendar</h5>
+            <p class="text-muted">Your attendance for the current month.</p>
+            <div id="attendanceCalendar"></div>
+        </div>
+        
+        <div id="history-tab" class="tab-content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Attendance History</h5>
+            </div>
+            <p class="text-muted">Showing records for the current month.</p>
+            <div id="historyList"></div>
+        </div>
+
+        <div id="profile-tab" class="tab-content">
+             <div class="text-center mb-4">
+                <i class="bi bi-person-circle" style="font-size: 4rem; color: var(--primary-color);"></i>
+                <h4 class="mb-0 mt-2" id="profileEmployeeName">Employee Name</h4>
+                <p class="text-muted" id="profileEmployeeLocation">Location</p>
+            </div>
+            <div class="alert alert-info">Reach out to the admin for a password change</div>
+        </div>
+    </main>
+    
+    <footer class="dashboard-footer">
+        <div class="marquee-support" id="dashboardSupportMarquee">
+          <marquee behavior="scroll" direction="left" scrollamount="5">
+            For support, contact Samir Singhsamanta: +91 76069 36790
+          </marquee>
+        </div>
+        <nav class="nav-tabs-bottom">
+            <button class="nav-tab active" data-tab="attendance-tab"><i class="bi bi-house-door-fill"></i><span>Home</span></button>
+            <button class="nav-tab" data-tab="calendar-tab"><i class="bi bi-calendar3"></i><span>Calendar</span></button>
+            <button class="nav-tab" data-tab="history-tab"><i class="bi bi-clock-history"></i><span>History</span></button>
+            <button class="nav-tab" data-tab="profile-tab"><i class="bi bi-person-circle"></i><span>Profile</span></button>
+        </nav>
+    </footer>
+  </div>
+</div>
+
+<div id="selfieModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+            <h5 class="modal-title mb-3 text-center">Take a Selfie</h5>
+            <div class="webcam-box">
+                <video id="webcam" autoplay playsinline></video>
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="captureBtn"><i class="bi bi-camera me-2"></i>Capture</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cameraPermissionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 text-center">
+            <h5 class="modal-title mb-3"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Camera Access Needed</h5>
+            <div class="mb-3" id="cameraPermissionMsg"></div>
+            <button class="btn btn-primary" data-bs-dismiss="modal">OK, I understand</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Supabase config
+  const SUPABASE_URL = 'https://wgjtkkvgskxzjqgsykze.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndnanRra3Znc2t4empxZ3N5a3plIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1MzEyODYsImV4cCI6MjA3MTEwNzI4Nn0.Hr69_1j4Ts-7d1G_RylJuRZKTaigWFBgIYlHVahIvVA';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentEmployee = null;
+  let selfieDataUrl = null;
+  let webcamStream = null;
+  let currentLocation = null;
+  let canMarkAttendance = true;
+  let nearestStore = null; 
+
+  // DOM Elements
+  const summaryPresent = document.getElementById('summaryPresent');
+  const summaryAbsent = document.getElementById('summaryAbsent');
+  const summaryTotalEmp = document.getElementById('summaryTotalEmp');
+  const slot1Count = document.getElementById('slot1Count');
+  const slot2Count = document.getElementById('slot2Count');
+  const slot3Count = document.getElementById('slot3Count');
+  const slot4Count = document.getElementById('slot4Count');
+  const loginSection = document.getElementById('login-section');
+  const dashboardSection = document.getElementById('dashboard-section');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const employeeName = document.getElementById('employeeName');
+  const employeeLocation = document.getElementById('employeeLocation');
+  const markAttendanceBtn = document.getElementById('markAttendanceBtn');
+  const attendanceStatus = document.getElementById('attendanceStatus');
+  const selfieModal = new bootstrap.Modal(document.getElementById('selfieModal'));
+  const webcam = document.getElementById('webcam');
+  const captureBtn = document.getElementById('captureBtn');
+  const selfiePreviewSection = document.getElementById('selfiePreviewSection');
+  const selfiePreview = document.getElementById('selfiePreview');
+  const submitAttendanceBtn = document.getElementById('submitAttendanceBtn');
+  const retakeSelfieBtn = document.getElementById('retakeSelfieBtn');
+  const cameraPermissionModal = new bootstrap.Modal(document.getElementById('cameraPermissionModal'));
+  const cameraPermissionMsg = document.getElementById('cameraPermissionMsg');
+  const attendanceRecords = document.getElementById('attendanceRecords');
+  const attendanceCalendar = document.getElementById('attendanceCalendar');
+  const historyList = document.getElementById('historyList');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const togglePassword = document.getElementById('togglePassword');
+  const userPassword = document.getElementById('userPassword');
+  const navTabs = document.querySelectorAll('.nav-tab');
+  const tabContents = document.querySelectorAll('.tab-content');
+  const profileEmployeeName = document.getElementById('profileEmployeeName');
+  const profileEmployeeLocation = document.getElementById('profileEmployeeLocation');
+
+  // Helper Functions
+  function toIST(date) {
+    let utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+    return new Date(utc + 19800000);
+  }
+  
+  function getISTDateRange(date) {
+    let istDate = toIST(date);
+    let year = istDate.getFullYear();
+    let month = istDate.getMonth();
+    let day = istDate.getDate();
+    let start = new Date(Date.UTC(year, month, day, 0, 0, 0) - 19800000);
+    let end = new Date(Date.UTC(year, month, day, 23, 59, 59, 999) - 19800000);
+    return { start: start.toISOString(), end: end.toISOString() };
+  }
+  
+  function showPage(pageId) {
+    document.querySelectorAll('.page-section').forEach(section => {
+      section.classList.add('hidden');
+    });
+    const page = document.getElementById(pageId);
+    page.style.display = 'flex';
+    setTimeout(() => page.classList.remove('hidden'), 50);
+  }
+  
+  function togglePasswordVisibility(input, icon) {
+      const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+      input.setAttribute('type', type);
+      icon.classList.toggle('bi-eye');
+      icon.classList.toggle('bi-eye-slash');
+  }
+
+  // Attendance Summary for TODAY (on login page)
+  async function loadTodayAttendanceSummary() {
+    const { data: userList, error: userError } = await supabase.from('users').select('username');
+    const totalEmp = userList?.length || 0;
+    summaryTotalEmp.textContent = totalEmp;
+
+    const { start, end } = getISTDateRange(new Date());
+    const { data: attendanceToday, error: attError } = await supabase
+      .from('attendance')
+      .select('username, timestamp')
+      .gte('timestamp', start)
+      .lte('timestamp', end);
+
+    let slots = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    let presentUsernames = new Set();
+
+    if (attendanceToday) {
+      attendanceToday.forEach(a => {
+        let istTs = toIST(new Date(a.timestamp));
+        let h = istTs.getHours();
+        if (h >= 7 && h < 9) slots[1]++;
+        else if (h >= 9 && h < 13) slots[2]++;
+        else if (h >= 13 && h < 17) slots[3]++;
+        else if (h >= 17 && h < 22) slots[4]++;
+        presentUsernames.add(a.username);
+      });
+    }
+    slot1Count.textContent = slots[1];
+    slot2Count.textContent = slots[2];
+    slot3Count.textContent = slots[3];
+    slot4Count.textContent = slots[4];
+
+    const presentCount = presentUsernames.size;
+    summaryPresent.textContent = presentCount;
+    summaryAbsent.textContent = totalEmp - presentCount;
+  }
+
+  // Unified Login Logic
+  loginForm.onsubmit = async function(e) {
+    e.preventDefault();
+    loginError.classList.add('d-none');
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('userPassword').value;
+
+    const { data: employeeData, error: employeeError } = await supabase
+      .from('users').select('*').eq('username', username).eq('password', password).single();
+
+    if (employeeData) {
+      currentEmployee = { ...employeeData, loginType: 'employee' };
+      initializeDashboard();
+      return;
+    }
+
+    const { data: clusterData, error: clusterError } = await supabase
+      .from('cluster').select('username, cluster_name').eq('username', username).eq('password', password).single();
+
+    if (clusterData) {
+      currentEmployee = {
+        username: clusterData.username,
+        name: clusterData.cluster_name,
+        location: 'Cluster Manager',
+        loginType: 'cluster'
+      };
+      initializeDashboard();
+      return;
+    }
+    
+    loginError.textContent = "Invalid username or password.";
+    loginError.classList.remove('d-none');
+  };
+  
+  function initializeDashboard() {
+      // Populate dashboard and profile info
+      employeeName.textContent = currentEmployee.name;
+      employeeLocation.textContent = currentEmployee.location || 'N/A';
+      profileEmployeeName.textContent = currentEmployee.name;
+      profileEmployeeLocation.textContent = currentEmployee.location || 'N/A';
+      
+      showPage('dashboard-section');
+      
+      // Reset to home tab on login
+      navTabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+      document.querySelector('.nav-tab[data-tab="attendance-tab"]').classList.add('active');
+      document.getElementById('attendance-tab').classList.add('active');
+      
+      // Load data for all tabs
+      loadAttendance();
+      loadAttendanceCalendar();
+      loadHistory();
+      checkAttendanceStatus();
+  }
+
+  logoutBtn.onclick = function() {
+    currentEmployee = null; selfieDataUrl = null; webcamStream = null; currentLocation = null; canMarkAttendance = true; nearestStore = null;
+    loginForm.reset();
+    attendanceRecords.innerHTML = '';
+    attendanceCalendar.innerHTML = '';
+    historyList.innerHTML = '';
+    markAttendanceBtn.disabled = false;
+    showPage('login-section');
+    loadTodayAttendanceSummary();
+  };
+  
+  togglePassword.addEventListener('click', () => togglePasswordVisibility(userPassword, togglePassword));
+
+  navTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+          navTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          tabContents.forEach(content => content.classList.remove('active'));
+          document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+  });
+
+  async function checkAttendanceStatus() {
+    if (currentEmployee && currentEmployee.loginType === 'cluster') {
+        canMarkAttendance = true;
+        markAttendanceBtn.disabled = false;
+        attendanceStatus.classList.add('d-none');
+        return;
+    }
+    
+    const { start, end } = getISTDateRange(new Date());
+    const { data, error } = await supabase
+      .from('attendance').select('id').eq('username', currentEmployee.username).gte('timestamp', start).lte('timestamp', end);
+
+    canMarkAttendance = !(data && data.length > 0);
+    markAttendanceBtn.disabled = !canMarkAttendance;
+
+    if (!canMarkAttendance) {
+      showAttendanceStatus("You have already marked attendance today.", "warning");
+    } else {
+        attendanceStatus.classList.add('d-none');
+    }
+  }
+
+  markAttendanceBtn.onclick = async function() {
+    await checkAttendanceStatus();
+    if (!canMarkAttendance) {
+      showAttendanceStatus("You have already marked attendance today.", "warning");
+      return;
+    }
+    selfiePreviewSection.classList.add('d-none');
+    selfiePreview.src = '';
+    if (!navigator.geolocation) {
+      showAttendanceStatus("Geolocation is not supported by your browser.", "danger");
+      return;
+    }
+    showAttendanceStatus("Checking your location...", "info");
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      currentLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+
+      if (currentEmployee.loginType === 'employee') {
+          const registeredLat = parseFloat(currentEmployee.latitude);
+          const registeredLng = parseFloat(currentEmployee.longitude);
+          if (isNaN(registeredLat) || isNaN(registeredLng)) {
+            showAttendanceStatus("Registered location not set. Contact admin.", "danger"); return;
+          }
+          const dist = haversineDistance(currentLocation.latitude, currentLocation.longitude, registeredLat, registeredLng);
+          if (dist > 20) {
+            showAttendanceStatus(`You are too far from your location (${dist.toFixed(0)}m away).`, "danger"); return;
+          }
+          startCamera();
+      } else if (currentEmployee.loginType === 'cluster') {
+          const { data: stores, error } = await supabase.from('store').select('location, latitude, longitude');
+          if (error || !stores || stores.length === 0) {
+              showAttendanceStatus("Could not find any stores. Contact admin.", "danger"); return;
+          }
+          let minDistance = Infinity;
+          stores.forEach(store => {
+              const storeLat = parseFloat(store.latitude);
+              const storeLng = parseFloat(store.longitude);
+              if (!isNaN(storeLat) && !isNaN(storeLng)) {
+                  const dist = haversineDistance(currentLocation.latitude, currentLocation.longitude, storeLat, storeLng);
+                  if (dist < minDistance) {
+                      minDistance = dist;
+                      nearestStore = store;
+                  }
+              }
+          });
+          if (nearestStore) {
+              showAttendanceStatus(`Nearest store: ${nearestStore.location} (${minDistance.toFixed(0)}m away).`, "info");
+              startCamera();
+          } else {
+              showAttendanceStatus("Could not determine the nearest store.", "danger");
+          }
+      }
+    }, (error) => {
+      showAttendanceStatus("Unable to get your location: " + error.message, "danger");
+    }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+  };
+  
+  async function startCamera() {
+      try {
+        if (webcamStream) webcamStream.getTracks().forEach(track => track.stop());
+        webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 480 }, height: { ideal: 640 } } });
+        webcam.srcObject = webcamStream;
+        webcam.onloadedmetadata = () => webcam.play();
+        selfieModal.show();
+      } catch (err) {
+        let msg = `<strong>Could not access camera.</strong><br>Error: ${err.message || err.name}`;
+        if (err.name === 'NotAllowedError') msg = `<strong>Camera access was blocked.</strong> Please allow camera access in your browser settings and reload the page.`;
+        if (err.name === 'NotFoundError' || err.name === 'OverconstrainedError') msg = `<strong>No camera detected.</strong> Please ensure your camera is connected and not in use by another app.`;
+        cameraPermissionMsg.innerHTML = msg;
+        cameraPermissionModal.show();
+      }
+  }
+
+  captureBtn.onclick = function() {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const video = webcam;
+    canvas.width = 240; canvas.height = 320;
+    const videoRatio = video.videoWidth / video.videoHeight;
+    const targetRatio = 240 / 320;
+    let sWidth, sHeight, sx, sy;
+    if (videoRatio > targetRatio) {
+      sHeight = video.videoHeight; sWidth = sHeight * targetRatio;
+      sx = (video.videoWidth - sWidth) / 2; sy = 0;
+    } else {
+      sWidth = video.videoWidth; sHeight = sWidth / targetRatio;
+      sx = 0; sy = (video.videoHeight - sHeight) / 2;
+    }
+    context.translate(240, 0); context.scale(-1, 1);
+    context.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, 240, 320);
+    selfieDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    selfiePreview.src = selfieDataUrl;
+    selfiePreviewSection.classList.remove('d-none');
+    selfieModal.hide();
+    if (webcamStream) webcamStream.getTracks().forEach(track => track.stop());
+  };
+
+  retakeSelfieBtn.onclick = () => { selfiePreviewSection.classList.add('d-none'); selfiePreview.src = ''; startCamera(); };
+
+  submitAttendanceBtn.onclick = async function() {
+    await checkAttendanceStatus();
+    if (!canMarkAttendance) { showAttendanceStatus("Already marked for today.", "warning"); return; }
+    if (!currentEmployee || !selfieDataUrl || !currentLocation) return;
+    showAttendanceStatus('Uploading...', 'info');
+
+    let attendanceData = {
+        username: currentEmployee.username, name: currentEmployee.name,
+        marked_latitude: currentLocation.latitude, marked_longitude: currentLocation.longitude,
+        image: selfieDataUrl, timestamp: new Date().toISOString()
+    };
+    if (currentEmployee.loginType === 'employee') {
+        attendanceData.location = currentEmployee.location;
+        attendanceData.registered_latitude = currentEmployee.latitude;
+        attendanceData.registered_longitude = currentEmployee.longitude;
+    } else if (currentEmployee.loginType === 'cluster' && nearestStore) {
+        attendanceData.location = nearestStore.location;
+        attendanceData.registered_latitude = nearestStore.latitude;
+        attendanceData.registered_longitude = nearestStore.longitude;
+    } else {
+        showAttendanceStatus("Could not submit. Location data missing.", 'danger'); return;
+    }
+    
+    const { error } = await supabase.from('attendance').insert([attendanceData]);
+    if (error) {
+      showAttendanceStatus("Failed to record attendance. " + error.message, 'danger');
+    } else {
+      showAttendanceStatus("Attendance marked successfully!", 'success');
+      loadAttendance(); loadAttendanceCalendar(); loadHistory(); checkAttendanceStatus();
+    }
+    selfiePreviewSection.classList.add('d-none');
+    selfiePreview.src = ''; selfieDataUrl = null; currentLocation = null; nearestStore = null;
+  };
+
+  function showAttendanceStatus(msg, type) {
+    attendanceStatus.innerHTML = msg;
+    attendanceStatus.className = `alert alert-${type}`;
+    attendanceStatus.classList.remove('d-none');
+  }
+
+  async function loadAttendance() {
+    attendanceRecords.innerHTML = "<em>Loading...</em>";
+    const { data, error } = await supabase
+      .from('attendance').select('*').eq('username', currentEmployee.username).order('timestamp', { ascending: false }).limit(5);
+
+    if (error || !data || !data.length) {
+      attendanceRecords.innerHTML = "<em>No recent records found.</em>"; return;
+    }
+    attendanceRecords.innerHTML = data.map(r => `
+      <div class="attendance-record-row">
+        <img src="${r.image}" class="attendance-img me-3" alt="Selfie" />
+        <div class="record-info">
+          <div class="record-info-name">${r.location || currentEmployee.name}</div>
+          <div class="record-info-time">${toIST(new Date(r.timestamp)).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</div>
+        </div>
+      </div>`).join("");
+  }
+
+  async function loadAttendanceCalendar() {
+    const now = new Date(); const istNow = toIST(now);
+    const year = istNow.getFullYear(); const month = istNow.getMonth();
+    const firstDayOfMonth = new Date(Date.UTC(year, month, 1));
+    const lastDayOfMonth = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
+
+    const { data, error } = await supabase
+      .from('attendance').select('timestamp').eq('username', currentEmployee.username)
+      .gte('timestamp', firstDayOfMonth.toISOString()).lte('timestamp', lastDayOfMonth.toISOString());
+    const presentDays = new Set(data ? data.map(r => toIST(new Date(r.timestamp)).getDate()) : []);
+
+    let cal = `<table class="calendar-table"><thead><tr><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr></thead><tbody>`;
+    let firstDay = new Date(year, month, 1).getDay();
+    let totalDays = new Date(year, month + 1, 0).getDate();
+    let day = 1;
+    for (let i = 0; i < 6; i++) {
+      cal += '<tr>';
+      for (let j = 0; j < 7; j++) {
+        if ((i === 0 && j < firstDay) || day > totalDays) {
+          cal += '<td></td>';
+        } else {
+          let dayClass = '';
+          if (day < istNow.getDate()) dayClass = presentDays.has(day) ? 'day-present' : 'day-absent';
+          else if (day === istNow.getDate()) dayClass = presentDays.has(day) ? 'day-present' : '';
+          cal += `<td><div class="calendar-day ${dayClass}">${day}</div></td>`;
+          day++;
+        }
+      }
+      cal += '</tr>'; if (day > totalDays) break;
+    }
+    cal += '</tbody></table>';
+    attendanceCalendar.innerHTML = cal;
+  }
+  
+  async function loadHistory() {
+      historyList.innerHTML = "<em>Loading...</em>";
+      const now = new Date(); const istNow = toIST(now);
+      const year = istNow.getFullYear(); const month = istNow.getMonth();
+      const firstDayOfMonth = new Date(Date.UTC(year, month, 1));
+      const lastDayOfMonth = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
+      
+      const { data, error } = await supabase
+          .from('attendance').select('*').eq('username', currentEmployee.username)
+          .gte('timestamp', firstDayOfMonth.toISOString()).lte('timestamp', lastDayOfMonth.toISOString())
+          .order('timestamp', { ascending: false });
+
+      if (error || !data || !data.length) {
+          historyList.innerHTML = "<em>No records found for this month.</em>"; return;
+      }
+      historyList.innerHTML = data.map(r => `
+          <div class="attendance-record-row">
+              <img src="${r.image}" class="attendance-img me-3" alt="Selfie" />
+              <div class="record-info">
+                  <div class="record-info-name">${toIST(new Date(r.timestamp)).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long'})}</div>
+                  <div class="record-info-time">Time: ${toIST(new Date(r.timestamp)).toLocaleTimeString('en-IN', { timeStyle: 'short' })} at ${r.location}</div>
+              </div>
+          </div>`).join("");
+  }
+  
+  function haversineDistance(lat1, lon1, lat2, lon2) {
+    function toRad(x) { return x * Math.PI / 180; }
+    const R = 6371000;
+    const dLat = toRad(lat2 - lat1); const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+  }
+  
+  loadTodayAttendanceSummary();
+</script>
+</body>
+</html>
